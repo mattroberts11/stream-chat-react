@@ -20,8 +20,9 @@ import {
 
 import 'stream-chat-react/dist/css/index.css';
 import './myAppStyles.css';
+const key = process.env.REACT_APP_STREAM_API_KEY;
 
-const chatClient = StreamChat.getInstance('7qfkkbd7dcrh');
+const chatClient = StreamChat.getInstance(key);
 
 const App = () => {
 
