@@ -8,7 +8,7 @@ export const ChatClientContext = createContext();
 export const ChatClientProvider = (props) => {
 
   const [chatClient] = useState(StreamChat.getInstance(key));
-  console.log('API KEY', key)
+  // console.log('API KEY', key)
   console.log('CHAT CLIENT', chatClient)
 
   return (

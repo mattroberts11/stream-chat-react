@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {forwardRef} from 'react';
 import { StreamChat } from 'stream-chat';
-import { ChatClientProvider, ChatClientContext } from './ChatClientContext';
+// import { ChatClientProvider, ChatClientContext } from './ChatClientContext';
 import { 
   Chat, 
   Channel, 
@@ -13,125 +13,122 @@ import {
   Window, 
   // TypingIndicator,
   // useChannelStateContext,
+  // useChatContext,
 } from 'stream-chat-react';
 
-// import { useComponentContext } from 'stream-chat-react';
-// import { CustomMessage } from '../src/components/CustomMessage';
+import {
+  ChatAutoComplete,
+  EmojiIconLarge,
+  EmojiPicker,
+  SendButton,
+  Tooltip,
+  useMessageInputContext,
+  useTranslationContext,
+ } from 'stream-chat-react';
 
-import 'stream-chat-react/dist/css/index.css';
-import './myAppStyles.css';
+// import 'stream-chat-react/dist/css/index.css';
+// import './myAppStyles.css';
+
+// import '@stream-io/@stream-io/stream-chat-css/dist/css/index.css';
+import '@stream-io/stream-chat-css'
+
+import './App.css';
+
 const key = process.env.REACT_APP_STREAM_API_KEY;
+const token = process.env.REACT_APP_TOKEN;
+const client = StreamChat.getInstance(key);
 
-const chatClient = StreamChat.getInstance(key);
+
+client.connectUser(
+  {
+    id: 'katy',
+    name: 'katy',
+    image: 'https://getstream.io/random_png/?id=icy-river-8&name=icy-river-8',
+  },
+  token,
+);
+
+const CustomMessageInput = () => {
+  const { t } = useTranslationContext();
+ 
+  const {
+    closeEmojiPicker,
+    emojiPickerIsOpen,
+    handleEmojiKeyDown,
+    handleSubmit,
+    openEmojiPicker,
+    textareaRef,
+  } = useMessageInputContext();
+
+console.log('TEXT AREA REF', textareaRef.current);
+
+  return (
+    <div className='str-chat__input-flat str-chat__input-flat--send-button-active'>
+      <div className='str-chat__input-flat-wrapper'>
+        <div className='str-chat__input-flat--textarea-wrapper'>
+          <div className='str-chat__input-flat-wrapper'>
+            {/* <textarea ref={textareaRef} className='rta__textarea str-chat__textarea__textarea'></textarea> */}
+            
+          </div>
+           <ChatAutoComplete  className="MATT-WAS-HERE"/>
+           
+          
+         <div className='str-chat__emojiselect-wrapper'>
+            <Tooltip>
+              {emojiPickerIsOpen ? t('Close emoji picker') : t('Open emoji picker')}
+            </Tooltip>
+            <span
+              className='str-chat__input-flat-emojiselect'
+              onClick={emojiPickerIsOpen ? closeEmojiPicker : openEmojiPicker}
+              onKeyDown={handleEmojiKeyDown}
+              role='button'
+              tabIndex={0}
+            >
+              <EmojiIconLarge />
+            </span>
+          </div>
+          <EmojiPicker />
+        </div> 
+        <SendButton sendMessage={handleSubmit} />
+      </div>
+    </div>
+  );
+ };
+
+
 
 const App = () => {
 
-  
+  if(!client){
+    return  <LoadingIndicator />;
+  }
 
-  // const [channels, setChannels] = useState();
-  
-  // at the very minimum you need this filter to feed to ChannelList component
-  // if you don't you'll get a 403 error
+  // for channel list
   const filters = { 
     type: 'messaging', 
     members: {$in: ['katy']}
   }
-  // sort is optional in ChannelList component but you can add it if you want to
-  // an example would be if you want to show the channel with the most recent messages first
-  const sort = {last_message_at: -1}
-
-  const filters2 = {
-    type: 'livestream',
-    members: {$in: ['katy']}
-  }
-  // const chatClient = useContext(ChatClientContext);
-  // const [channel, setChannel] = useState('Skiing');
-  const userToken = process.env.REACT_APP_TOKEN;
-
-  const getChannels = async () => {
-    let channels;
-    await chatClient.queryChannels(filters)
-      .then( r => console.log("channels", r))
-  }
-
-  useEffect(() => {
-
-    const initChat = async () => {
-      await chatClient.connectUser(
-        {
-          id: 'katy',
-          name: 'katy',
-          image: 'https://getstream.io/random_png/?id=snowy-waterfall-1&name=snowy-waterfall-1',
-        },
-        userToken,
-      )
-      .then( r => console.log('CONNECT USER', r))
-    }
-
-    initChat(); 
-    
-      getChannels();
-  
-    
-    // setChannels(channels.data)
-  });
-
-  if(!chatClient){
-    return  <LoadingIndicator />;
-  }
-
-  // const CustomChannelListContainer = (props) => {
-  //   // console.log('CHANNELS', channels)
-    
-  //   return (
-  //     <>
-        
-  //       <div className="str-chat str-chat-channel-list messaging light">
-  //         {channels &&
-  //           channels.map((channel) => (
-  //             <p>{channel}</p>
-  //           ))
-  //         }
-  //       </div>
-  //     </>
-  //   )
-  // }
 
   const CustomListItem = (props) => {
     return (
       <ul>
         <li>List Item</li>
       </ul>
-      
     )
   }
-// console.log("CHANNELS", channels)
+
   return (
-    <ChatClientProvider>
-      
-      <Chat client={chatClient} theme='messaging light'>
-      
-        <ChannelList filters={filters} sort={sort} showChannelSearch />
-        {/* <ChannelList List={CustomChannelListContainer}  /> */}
-        {/* <ChannelList filters={filters2} /> */}
-        
-        {/* <Users /> */}
-        <Channel>
+      <Chat client={client} theme='messaging light'>
+        <ChannelList filters={filters}  showChannelSearch />
+        <Channel >
           <Window>
             <ChannelHeader />
-            {/* <CustomChannelHeader /> */}
             <MessageList />
-           
-            <MessageInput />
-              {/* <QuotedMessagePreview /> 
-            </MessageInput> */}
+            <MessageInput Input={CustomMessageInput}/>
           </Window>
           <Thread />
         </Channel>
-      
       </Chat>
-    </ChatClientProvider>
-  )
-};
+)};
 
 export default App;
