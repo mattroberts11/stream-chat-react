@@ -1,18 +1,22 @@
-import React, {forwardRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import { StreamChat } from 'stream-chat';
 // import { ChatClientProvider, ChatClientContext } from './ChatClientContext';
 import { 
   Chat, 
+  ChatDown,
   Channel, 
   ChannelHeader, 
   ChannelList, 
   LoadingIndicator,
+  LoadingChannels,
+  LoadingErrorIndicator,
   MessageInput, 
   MessageList, 
   Thread, 
   Window, 
   // TypingIndicator,
-  // useChannelStateContext,
+  useChannelStateContext,
+  useChatContext,
   // useChatContext,
 } from 'stream-chat-react';
 
@@ -95,9 +99,20 @@ console.log('TEXT AREA REF', textareaRef.current);
   );
  };
 
-
+ 
 
 const App = () => {
+  const { additionalTextareaProps } = useMessageInputContext();
+  // let textarea = useRef();
+  //   console.log("TEXTAREA", textarea)
+
+  // useEffect( () => {
+  //   // textarea = document.querySelector('.str-chat__textarea__textarea');
+  //   if(textarea){
+  //     textarea.setAttribute('style', 'height: 100px')
+  //   }
+    
+  // })
 
   if(!client){
     return  <LoadingIndicator />;
@@ -109,22 +124,54 @@ const App = () => {
     members: {$in: ['katy']}
   }
 
-  const CustomListItem = (props) => {
+
+  const CustomList = (props) => {
+    
+
+    const { children, error, loading, LoadingErrorIndicator, LoadingIndicator } = props;
+  
+    if (error) {
+      return <LoadingErrorIndicator type={'connection'} />;
+    }
+  
+    if (loading) {
+      return <LoadingIndicator />;
+    }
+  
+    return <div>{children}</div>;
+  };
+  
+  const CustomErrorIndicator = (props) => {
+    const { text } = props;
+  
+    return <div>{text}</div>;
+  };
+  
+  const CustomLoadingIndicator = () => {
+    return <div>Loading, loading, loading...</div>;
+  };
+  
+  const CustomPreview = (props) => {
+    const { channel } = props;
+    
+    console.log("members", channel.state.members);
+
+    const members = Object.keys(channel.state.members)
+
+
     return (
-      <ul>
-        <li>List Item</li>
-      </ul>
+      <div className="str-chat__channel-preview-messenger--name"><span>{members[0]}</span></div>
     )
-  }
+   }
 
   return (
       <Chat client={client} theme='messaging light'>
-        <ChannelList filters={filters}  showChannelSearch />
+        <ChannelList filters={filters}  showChannelSearch Preview={CustomPreview}/>
         <Channel >
           <Window>
             <ChannelHeader />
             <MessageList />
-            <MessageInput Input={CustomMessageInput}/>
+            <MessageInput />
           </Window>
           <Thread />
         </Channel>

@@ -1,3 +1,6 @@
-.str-chat__input-flat-wrapper {
-
+.str-chat__input-flat-wrapper  textarea.str-chat__textarea__textarea {
+  height: 120px;
+  /* height: 20px; */
 }
+
+/* rta__textarea str-chat__textarea__textarea */
