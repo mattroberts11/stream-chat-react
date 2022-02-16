@@ -151,15 +151,6 @@ const App = () => {
     );
    };
 
-  //  const CustomTextArea = () => {
-  //  const {textareaRef} = useMessageInputContext();
-
-  //   useEffect( ()=> {
-  //     if(textareaRef){
-  //       textareaRef.current.style.height = '97px';
-  //     }
-  //   })
-  // }
 
   return (
       <Chat client={client} theme='messaging light'>
