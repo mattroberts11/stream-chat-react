@@ -52,67 +52,8 @@ client.connectUser(
   token,
 );
 
-const CustomMessageInput = () => {
-  const { t } = useTranslationContext();
- 
-  const {
-    closeEmojiPicker,
-    emojiPickerIsOpen,
-    handleEmojiKeyDown,
-    handleSubmit,
-    openEmojiPicker,
-    textareaRef,
-  } = useMessageInputContext();
-
-console.log('TEXT AREA REF', textareaRef.current);
-
-  return (
-    <div className='str-chat__input-flat str-chat__input-flat--send-button-active'>
-      <div className='str-chat__input-flat-wrapper'>
-        <div className='str-chat__input-flat--textarea-wrapper'>
-          <div className='str-chat__input-flat-wrapper'>
-            {/* <textarea ref={textareaRef} className='rta__textarea str-chat__textarea__textarea'></textarea> */}
-            
-          </div>
-           <ChatAutoComplete  className="MATT-WAS-HERE"/>
-           
-          
-         <div className='str-chat__emojiselect-wrapper'>
-            <Tooltip>
-              {emojiPickerIsOpen ? t('Close emoji picker') : t('Open emoji picker')}
-            </Tooltip>
-            <span
-              className='str-chat__input-flat-emojiselect'
-              onClick={emojiPickerIsOpen ? closeEmojiPicker : openEmojiPicker}
-              onKeyDown={handleEmojiKeyDown}
-              role='button'
-              tabIndex={0}
-            >
-              <EmojiIconLarge />
-            </span>
-          </div>
-          <EmojiPicker />
-        </div> 
-        <SendButton sendMessage={handleSubmit} />
-      </div>
-    </div>
-  );
- };
-
- 
 
 const App = () => {
-  const { additionalTextareaProps } = useMessageInputContext();
-  // let textarea = useRef();
-  //   console.log("TEXTAREA", textarea)
-
-  // useEffect( () => {
-  //   // textarea = document.querySelector('.str-chat__textarea__textarea');
-  //   if(textarea){
-  //     textarea.setAttribute('style', 'height: 100px')
-  //   }
-    
-  // })
 
   if(!client){
     return  <LoadingIndicator />;
@@ -154,7 +95,6 @@ const App = () => {
   const CustomPreview = (props) => {
     const { channel } = props;
     
-    console.log("members", channel.state.members);
 
     const members = Object.keys(channel.state.members)
 
@@ -164,10 +104,68 @@ const App = () => {
     )
    }
 
+  const CustomMessageInput = () => {
+    const { t } = useTranslationContext();
+   
+    const {
+      closeEmojiPicker,
+      emojiPickerIsOpen,
+      handleEmojiKeyDown,
+      handleSubmit,
+      openEmojiPicker,
+      textareaRef,
+    } = useMessageInputContext();
+
+    useEffect( ()=> {
+      if(textareaRef){
+        textareaRef.current.style.height = '97px';
+      }
+    })
+  
+    return (
+      <div className='str-chat__input-flat str-chat__input-flat--send-button-active'>
+        <div className='str-chat__input-flat-wrapper'>
+          <div className='str-chat__input-flat--textarea-wrapper'>
+            <div className='str-chat__input-flat-wrapper'>
+            </div>
+             <ChatAutoComplete />
+           <div className='str-chat__emojiselect-wrapper'>
+              <Tooltip>
+                {emojiPickerIsOpen ? t('Close emoji picker') : t('Open emoji picker')}
+              </Tooltip>
+              <span
+                className='str-chat__input-flat-emojiselect'
+                onClick={emojiPickerIsOpen ? closeEmojiPicker : openEmojiPicker}
+                onKeyDown={handleEmojiKeyDown}
+                role='button'
+                tabIndex={0}
+              >
+                <EmojiIconLarge />
+              </span>
+            </div>
+            <EmojiPicker />
+          </div> 
+          <SendButton sendMessage={handleSubmit} />
+        </div>
+      </div>
+    );
+   };
+
+  //  const CustomTextArea = () => {
+  //  const {textareaRef} = useMessageInputContext();
+
+  //   useEffect( ()=> {
+  //     if(textareaRef){
+  //       textareaRef.current.style.height = '97px';
+  //     }
+  //   })
+  // }
+
   return (
       <Chat client={client} theme='messaging light'>
-        <ChannelList filters={filters}  showChannelSearch Preview={CustomPreview}/>
-        <Channel >
+        <ChannelList filters={filters}  showChannelSearch />
+        <Channel Input={CustomMessageInput}>
+        {/* <Channel> */}
           <Window>
             <ChannelHeader />
             <MessageList />
