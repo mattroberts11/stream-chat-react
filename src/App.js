@@ -1,22 +1,22 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect} from 'react';
 import { StreamChat } from 'stream-chat';
 // import { ChatClientProvider, ChatClientContext } from './ChatClientContext';
 import { 
   Chat, 
-  ChatDown,
+  // ChatDown,
   Channel, 
   ChannelHeader, 
   ChannelList, 
-  LoadingIndicator,
-  LoadingChannels,
-  LoadingErrorIndicator,
+  // LoadingIndicator,
+  // LoadingChannels,
+  // LoadingErrorIndicator,
   MessageInput, 
   MessageList, 
   Thread, 
   Window, 
   // TypingIndicator,
-  useChannelStateContext,
-  useChatContext,
+  // useChannelStateContext,
+  // useChatContext,
   // useChatContext,
 } from 'stream-chat-react';
 
@@ -38,10 +38,12 @@ import '@stream-io/stream-chat-css'
 
 import './App.css';
 
-const key = process.env.REACT_APP_STREAM_API_KEY;
+const key = process.env.REACT_APP_APP_KEY;
 const token = process.env.REACT_APP_TOKEN;
 const client = StreamChat.getInstance(key);
 
+console.log('KEY===', key);
+console.log('TOKEN===', token);
 
 client.connectUser(
   {
@@ -55,9 +57,9 @@ client.connectUser(
 
 const App = () => {
 
-  if(!client){
-    return  <LoadingIndicator />;
-  }
+  // if(!client){
+  //   return  <LoadingIndicator />;
+  // }
 
   // for channel list
   const filters = { 
@@ -154,8 +156,9 @@ const App = () => {
 
   return (
       <Chat client={client} theme='messaging light'>
+     
         <ChannelList filters={filters}  showChannelSearch />
-        <Channel Input={CustomMessageInput}>
+        <Channel>
         {/* <Channel> */}
           <Window>
             <ChannelHeader />
